@@ -18,17 +18,17 @@ class ShopController extends Controller
             'name_shop' => 'required',
             'phone' => 'required',
             'address' => 'required',
-            'path' => 'required',
+            // 'path' => 'required',
             'desc' => 'required',
         ]);
 
         if($validator->fails()){
             return redirect()->route('home')->withErrors($validator)->withInput();
         }else{
-            $path = $request->file('path');
-            $extension_path = $path->getClientOriginalExtension();
-            $full_name_path = Auth::user()->email."-".Str::random(20).".".$extension_path;
-            $path->move(public_path('shop'), $full_name_path);
+            // $path = $request->file('path');
+            // $extension_path = $path->getClientOriginalExtension();
+            // $full_name_path = Auth::user()->email."-".Str::random(20).".".$extension_path;
+            // $path->move(public_path('shop'), $full_name_path);
 
             Shop::create([
                 'user_id' => Auth::user()->id,
@@ -36,7 +36,7 @@ class ShopController extends Controller
                 'phone' => $request->phone,
                 'address' => $request->address,
                 'desc' => $request->desc,
-                'path' => $full_name_path,
+                'path' => 'test.jpg',
             ]);
 
             return redirect()->route('home');

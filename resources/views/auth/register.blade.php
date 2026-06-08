@@ -1,6 +1,6 @@
 <?php
   use App\Models\User;
-  if (!User::exists()){
+  if (!User::where('role', 'admin')->exists()){
 ?>
 
 <!DOCTYPE html>

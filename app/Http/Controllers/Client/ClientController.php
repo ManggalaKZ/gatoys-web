@@ -14,57 +14,69 @@ use Str;
 
 class ClientController extends Controller
 {
-    public function index(){
+    public function index()
+    {
+        $shop = Shop::first();
 
-        if(!Shop::exists()){
-            return redirect()->route('register');
-        }
+        // if (!$shop) {
+        //     return redirect()->route('register');
+        // }
 
         $data = [
-            'shop' => Shop::first(),
-            'product' => Product::all()->sortByDesc('id')->take(8),
-            'category' => Category::all()->sortByDesc('id')->take(4),
+            'shop' => $shop,
+            'product' => Product::with(['category', 'productImage'])
+                ->orderBy('id', 'DESC')
+                ->take(8)
+                ->get(),
+            'category' => Category::orderBy('id', 'DESC')->take(4)->get(),
             'title' => 'Home'
         ];
 
         return view('client.index', $data);
     }
 
-    public function products(){
+    public function products()
+    {
         $data = [
             'shop' => Shop::first(),
-            'product' => Product::orderBy('id', 'DESC')->paginate(16),
-            'category' => Category::all()->sortByDesc('id'),
+            'product' => Product::with(['category', 'productImage'])
+                ->orderBy('id', 'DESC')
+                ->paginate(16),
+            'category' => Category::orderBy('id', 'DESC')->get(),
             'title' => 'Products'
         ];
 
         return view('client.products', $data);
     }
 
-    public function searchProduct(Request $request){
+    public function searchProduct(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'product' => 'required'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect()->route('clientHome')->withErrors($validator)->withInput();
-        }else{
-            
-            $search = str_replace(' ', '-', strtolower($request->product));
+        } else {
+            $search = $request->product;
 
             $data = [
                 'title' => 'Result',
                 'shop' => Shop::first(),
-                'product' => Product::where('title', 'LIKE', '%'.$search.'%')->orderBy('id', 'DESC')->paginate(20),
-                'search' => $request->product
+                'product' => Product::with(['category', 'productImage'])
+                    // UBAH 'LIKE' MENJADI 'ILIKE' DI BARIS INI
+                    ->where('title', 'ILIKE', '%' . $search . '%')
+                    ->orderBy('id', 'DESC')
+                    ->paginate(20)
+                    ->withQueryString(),
+                'search' => $search
             ];
 
             return view('client.productSearch', $data);
-
         }
     }
-
-    public function category(){
+    public function category()
+    {
         $data = [
             'shop' => Shop::first(),
             'category' => Category::orderBy('id', 'DESC')->paginate(12),
@@ -74,24 +86,41 @@ class ClientController extends Controller
         return view('client.category', $data);
     }
 
-    public function categoryProducts($category){
+    public function categoryProducts($category)
+    {
         $data = [
             'shop' => Shop::first(),
+
             'category' => Category::where('name', $category)->first(),
-            'title' => 'Category - '.str_replace('-', ' ', ucwords($category))
+            'title' => 'Category - ' . str_replace('-', ' ', ucwords($category))
         ];
 
         return view('client.categoryProducts', $data);
     }
 
-    public function productDetail($product){
+    public function productDetail($products)
+    {
+        $products = trim($products);
+        $product = Product::with([
+            'category.product.productImage',
+            'category.product.category',
+            'productImage'
+        ])
+            ->where('title', $products)
+            ->orWhere('title', 'LIKE', $products . '%')
+            ->first();
 
-        $product = Product::where('title', $product)->first();
+        if (!$product) {
+            abort(404, 'Product not found');
+        }
 
-        if($product->category->product->count() > 1){
+        if ($product->category && $product->category->product->count() > 1) {
             $recomendationProducts = $product->category->product->take(8);
-        }else{
-            $recomendationProducts = Product::all()->sortByDesc('id')->take(8);
+        } else {
+            $recomendationProducts = Product::with(['category', 'productImage'])
+                ->orderBy('id', 'DESC')
+                ->take(8)
+                ->get();
         }
 
         $data = [
@@ -104,7 +133,8 @@ class ClientController extends Controller
         return view('client.productDetail', $data);
     }
 
-    public function checkout(){
+    public function checkout()
+    {
         $data = [
             'shop' => Shop::first(),
             'title' => 'Checkout'
@@ -113,21 +143,22 @@ class ClientController extends Controller
         return view('client.checkout', $data);
     }
 
-    public function checkoutSave(Request $request){
+    public function checkoutSave(Request $request)
+    {
         $validator = Validator($request->all(), [
             'name' => 'required',
             'phone' => 'required',
             'address' => 'required'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect()->route('clientCheckout')->withErrors($validator)->withInput();
-        }else{
-            $order_code = Str::random(3).'-'.Date('Ymd');
+        } else {
+            $order_code = Str::random(3) . '-' . Date('Ymd');
 
-            if(session('cart')){
+            if (session('cart')) {
                 $total = 0;
-                foreach((array) session('cart') as $id => $details){
+                foreach ((array) session('cart') as $id => $details) {
                     $total += $details['price'] * $details['quantity'];
 
                     $data[$id] = [
@@ -138,8 +169,10 @@ class ClientController extends Controller
                     ];
                 }
 
+                $shop = Shop::first();
+
                 Order::create([
-                    'shop_id' => Shop::first()->id,
+                    'shop_id' => $shop->id,
                     'order_code' => $order_code,
                     'name' => $request->name,
                     'phone' => $request->phone,
@@ -155,11 +188,11 @@ class ClientController extends Controller
 
                 return redirect()->route('clientOrderCode', $order_code);
             }
-
         }
     }
 
-    public function successOrder($order_code){
+    public function successOrder($order_code)
+    {
         $data = [
             'shop' => Shop::first(),
             'order_code' => $order_code,
@@ -168,9 +201,9 @@ class ClientController extends Controller
 
         return view('client.success-order', $data);
     }
-    
 
-    public function checkOrder(){
+    public function checkOrder()
+    {
         $data = [
             'shop' => Shop::first(),
             'title' => 'Check Order'
@@ -179,31 +212,31 @@ class ClientController extends Controller
         return view('client.check-order', $data);
     }
 
-    public function checkOrderStatus(Request $request){
-
+    public function checkOrderStatus(Request $request)
+    {
         $order = Order::where('order_code', $request->order_code)->first();
+        $shop = Shop::first();
 
-
-        if($order){
+        if ($order) {
             $data = [
-                'shop' => Shop::first(),
+                'shop' => $shop,
                 'order' => $order,
                 'orderDetail' => OrderDetail::where('order_code', $request->order_code)->get(),
                 'title' => 'Check Order'
             ];
             return view('client.check-order', $data);
-
         }
 
         $data = [
-            'shop' => Shop::first(),
+            'shop' => $shop,
             'title' => 'Check Order'
         ];
 
         return view('client.check-order', $data);
     }
 
-    public function about(){
+    public function about()
+    {
         $data = [
             'shop' => Shop::first(),
             'title' => 'About'

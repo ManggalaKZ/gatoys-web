@@ -15,10 +15,9 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('shop_id');
             $table->string('name');
+            $table->string('description');
             $table->string('path');
-            $table->foreign('shop_id')->references('id')->on('shops')->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

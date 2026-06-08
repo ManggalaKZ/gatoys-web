@@ -1,0 +1,29 @@
+<?php
+
+namespace App\View\Components\Organisms;
+
+use Illuminate\View\Component;
+
+class Chatbot extends Component
+{
+    /**
+     * Create a new component instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Get the view / contents that represent the component.
+     *
+     * @return \Illuminate\Contracts\View\View|\Closure|string
+     */
+    public function render()
+    {
+        // Ini memberitahu Laravel untuk mencari view di folder client/components/organisms
+        return view('client.components.organisms.chatbot');
+    }
+}

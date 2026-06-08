@@ -8,13 +8,20 @@
     <div class="product__carousel">
         <div class="swiper-container gallery-top">
           <div class="swiper-wrapper">
-            @foreach($dataProductimages as $row)
+            @forelse($dataProductimages as $row)
               <div class="swiper-slide easyzoom easyzoom--overlay">
                 <a href="{{ asset('shop/products/'.$row->path)}}">
                   <img src="{{ asset('shop/products/'.$row->path)}}">
                 </a>
               </div>
-            @endforeach
+            @empty
+              {{-- Path no_image.png --}}
+              <div class="swiper-slide easyzoom easyzoom--overlay">
+                <a href="{{ asset('shop/products/no_image.png')}}">
+                  <img src="{{ asset('shop/products/no_image.png')}}">
+                </a>
+              </div>
+            @endforelse
           </div>
 
           <div class="swiper-button-next swiper-button-white"></div>
@@ -23,11 +30,16 @@
 
         <div class="swiper-container gallery-thumbs">
           <div class="swiper-wrapper">
-            @foreach($dataProductimages as $row)
+            @forelse($dataProductimages as $row)
               <div class="swiper-slide">
                 <img src="{{ asset('shop/products/'.$row->path)}}">
               </div>
-            @endforeach
+            @empty
+              {{-- Path no_image.png --}}
+              <div class="swiper-slide">
+                <img src="{{ asset('shop/products/no_image.png')}}">
+              </div>
+            @endforelse
           </div>
         </div>
       </div>

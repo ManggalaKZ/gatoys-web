@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }}</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -21,38 +23,42 @@
         body::-webkit-scrollbar {
             display: none;
         }
-        .bi{
-            display:flex;
-            align-items:center;
-            justify-content:center;
+
+        .bi {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 
 </head>
+
 <body>
-  
-{{ $slot }}
+
+    {{ $slot }}
+    <x-organisms.chatbot />
 
 
-
-<script src="{{ asset('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
-<script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ asset('assets/js/mazer.js') }}"></script>
-<script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
-<script src="{{ asset('assets/vendors/toastify/toastify.js') }}"></script>
-@if(session('success'))
+    <script src="{{ asset('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/mazer.js') }}"></script>
+    <script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/toastify/toastify.js') }}"></script>
+    @if(session('success'))
     <script>
         Toastify({
             text: "{{session('success')}}",
             duration: 3000,
-            close:true,
-            gravity:"top",
+            close: true,
+            gravity: "top",
             position: "right",
             backgroundColor: "#4fbe87",
         }).showToast();
     </script>
-@endif
+    @endif
 
-@stack('js')
+    @stack('js')
 </body>
+
 </html>

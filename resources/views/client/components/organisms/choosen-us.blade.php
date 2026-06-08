@@ -1,5 +1,5 @@
 <div class="container py-5">
-    <h1 class="text-center py-5">Why Choose US</h1>
+    <h1 class="text-center py-5">Pesan Sekarang!</h1>
     <div class="row g-4">
         <div class="col-md-4 col-12">
             <x-molecules.choosen-block icon="bi-box" title="Free Shipping" desc="Free on orders overs $100" bg="primary"/>

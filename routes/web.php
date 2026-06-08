@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Client\ClientController;
 use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\ChatbotController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +20,11 @@ use App\Http\Controllers\Client\CartController;
 |
 */
 
+use App\Http\Controllers\Client\CustomerAuthController;
+
 // Client
 
-Route::controller(ClientController::class)->group(function(){
+Route::controller(ClientController::class)->group(function () {
     Route::get('/', 'index')->name('clientHome');
     Route::get('/products', 'products')->name('clientProducts');
     Route::get('/products-search', 'searchProduct')->name('clientProductSearch');
@@ -39,21 +42,33 @@ Route::controller(ClientController::class)->group(function(){
     Route::get('/check-order', 'checkOrder')->name('clientCheckOrder');
     Route::post('/check-order-status', 'checkOrderStatus')->name('clientCheckOrderStatus');
     Route::get('/about', 'about')->name('clientAbout');
+    // Route API untuk Chatbot
+    Route::post('/chat/send', [ChatbotController::class, 'sendMessage'])->name('clientChatbotSend');
 });
 
-Route::controller(CartController::class)->group(function(){
+Route::controller(CartController::class)->group(function () {
     Route::get('/carts', 'carts')->name('clientCarts');
     Route::post('/add-to-cart', 'addToCart')->name('clientAddToCart');
     Route::post('/update-cart', 'updateCart')->name('clientUpdateCart');
     Route::post('/delete-cart', 'deleteCart')->name('clientDeleteCart');
 });
 
+// Customer Auth
+Route::middleware('guest')->group(function () {
+    Route::get('/customer/login', [CustomerAuthController::class, 'showLogin'])->name('clientLoginPage');
+    Route::post('/customer/login', [CustomerAuthController::class, 'login'])->name('clientLoginPost');
+    Route::get('/customer/register', [CustomerAuthController::class, 'showRegister'])->name('clientRegisterPage');
+    Route::post('/customer/register', [CustomerAuthController::class, 'register'])->name('clientRegisterPost');
+});
+Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('clientLogout');
+
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'isAdmin'])->group(function () {
     // Shop
-    Route::controller(ShopController::class)->group(function() {
+    Route::controller(ShopController::class)->group(function () {
         Route::post('/shop/create', 'create')->name('shopCreate');
         Route::get('/shop/detail', 'detail')->name('shopDetail');
         Route::post('/shop/update', 'update')->name('shopUpdate');
@@ -61,7 +76,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Category
-    Route::controller(CategoryController::class)->group(function() {
+    Route::controller(CategoryController::class)->group(function () {
         Route::get('/admin/category', 'index')->name('category');
         Route::get('/admin/category/create', 'create')->name('categoryCreate');
         Route::post('/admin/category/check', 'check')->name('categoryCheck');
@@ -70,7 +85,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Product
-    Route::controller(ProductController::class)->group(function() {
+    Route::controller(ProductController::class)->group(function () {
         Route::get('/admin/products', 'index')->name('products');
         Route::get('/admin/product/create', 'create')->name('productCreate');
         Route::post('/admin/product/check', 'check')->name('productCheck');
@@ -85,7 +100,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Orders
-    Route::controller(OrderController::class)->group(function() {
+    Route::controller(OrderController::class)->group(function () {
         Route::get('/admin/orders', 'index')->name('orders');
         Route::get('/admin/order/{order_code}', 'detail')->name('orderDetail');
         Route::post('/admin/order/update-status/{order_code}', 'updateStatus')->name('orderUpdateStatus');
