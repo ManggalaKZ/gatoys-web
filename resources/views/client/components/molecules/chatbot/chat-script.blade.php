@@ -157,7 +157,7 @@
                         if (src.type === 'product' && src.product_name) {
                             const img = src.image ? ('/shop/products/' + src.image) : '/shop/products/no_image.png';
                             const price = 'Rp ' + Number(src.price || 0).toLocaleString('id-ID');
-                            const link = src.product_id ? ('/product/' + src.product_id) : '#';
+                            const link = src.product_name ? ('/product/' + encodeURIComponent(src.product_name)) : '#';
                             cards += '<a class="rec-card" href="' + link + '">'
                                   +    '<img src="' + img + '" onerror="this.src=\'/shop/products/no_image.png\'" alt="">'
                                   +    '<div class="rec-card-name">' + src.product_name + '</div>'
