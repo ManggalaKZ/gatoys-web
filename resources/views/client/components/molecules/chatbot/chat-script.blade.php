@@ -152,12 +152,20 @@
                 let botReply = data.answer;
 
                 if (data.sources && data.sources.length > 0) {
-                    botReply += '<br><br>';
+                    let cards = '';
                     data.sources.forEach(src => {
                         if (src.type === 'product' && src.product_name) {
-                            botReply += '<span class="source-badge"><i class="bi bi-box-seam"></i> ' + src.product_name + ' ($' + src.price + ')</span> ';
+                            const img = src.image ? ('/shop/products/' + src.image) : '/shop/products/no_image.png';
+                            const price = 'Rp ' + Number(src.price || 0).toLocaleString('id-ID');
+                            const link = src.product_id ? ('/product/' + src.product_id) : '#';
+                            cards += '<a class="rec-card" href="' + link + '">'
+                                  +    '<img src="' + img + '" onerror="this.src=\'/shop/products/no_image.png\'" alt="">'
+                                  +    '<div class="rec-card-name">' + src.product_name + '</div>'
+                                  +    '<div class="rec-card-price">' + price + '</div>'
+                                  +  '</a>';
                         }
                     });
+                    if (cards) botReply += '<div class="rec-cards">' + cards + '</div>';
                 }
 
                 // 1. Tampilkan Balasan Bot di UI

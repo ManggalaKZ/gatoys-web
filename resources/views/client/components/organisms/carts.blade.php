@@ -41,7 +41,7 @@
                 data: {"_token": "{{ csrf_token() }}", product_id: product_id, quantity : quantity},
                 url : '{{ route("clientUpdateCart") }}',
                 success: function(data){
-                    $(".cart-total").text(data.total);
+                    $(".cart-total").text(Number(data.total).toLocaleString('id-ID'));
                 }
             })
         }
@@ -59,7 +59,7 @@
                 valueStock.val(countStock);
                 total = valueStock.data('price') * countStock;
                 update(id, countStock);
-                subTotal.text(total);
+                subTotal.text(Number(total).toLocaleString('id-ID'));
             }
         }
 
@@ -73,7 +73,7 @@
                 valueStock.val(countStock);
                 total = valueStock.data('price') * countStock;
                 update(id, countStock);
-                subTotal.text(total);
+                subTotal.text(Number(total).toLocaleString('id-ID'));
             }  
         }
 
@@ -92,7 +92,7 @@
                 data: {"_token": "{{ csrf_token() }}", id: id},
                 url : '{{ route("clientDeleteCart") }}',
                 success: function(data){
-                    $(".cart-total").text(data.total);
+                    $(".cart-total").text(Number(data.total).toLocaleString('id-ID'));
                     removeItem.remove();
                     $('#cartCount').text(data.cartCount);
                     Toastify({

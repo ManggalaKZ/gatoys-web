@@ -300,4 +300,49 @@
     .chat-login-btn:hover {
         background-color: #0033cc;
     }
+
+    /* Kartu rekomendasi produk (horizontal scrollable) */
+    .rec-cards {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 8px 2px 4px;
+        margin-top: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .rec-cards::-webkit-scrollbar { height: 6px; }
+    .rec-cards::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .rec-card {
+        flex: 0 0 auto;
+        width: 118px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        overflow: hidden;
+        text-decoration: none;
+        color: #1f2937;
+        transition: box-shadow .15s, transform .15s;
+    }
+    .rec-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,.14); transform: translateY(-2px); }
+    .rec-card img {
+        width: 100%;
+        height: 90px;
+        object-fit: contain;
+        background: #f8f9fa;
+        display: block;
+    }
+    .rec-card-name {
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.3;
+        padding: 6px 7px 0;
+        max-height: 43px;
+        overflow: hidden;
+    }
+    .rec-card-price {
+        font-size: 12px;
+        font-weight: 700;
+        color: #0044ff;
+        padding: 3px 7px 9px;
+    }
 </style>

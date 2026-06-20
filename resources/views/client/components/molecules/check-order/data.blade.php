@@ -33,12 +33,12 @@
                         <tr>
                             <td><b>Order Code</b></td>
                             <td>&nbsp; : &nbsp;</td>
-                            <td><b><u>${{ $order->order_code }}</u></b></td>
+                            <td><b><u>#{{ $order->order_code }}</u></b></td>
                         </tr>
                         <tr>
                             <td><b>Total</b></td>
                             <td>&nbsp; : &nbsp;</td>
-                            <td><b><u>${{ $order->total }}</u></b></td>
+                            <td><b><u>Rp {{ number_format($order->total, 0, ',', '.') }}</u></b></td>
                         </tr>
                         <tr>
                             <td><b>Name</b></td>
@@ -80,9 +80,9 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{!! str_replace('-', ' ', ucwords($item->title)) !!}</td>
-                                <td>${{ $item->price }}</td>
+                                <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td>${!! $item->price * $item->quantity !!}</td>
+                                <td>Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -98,11 +98,11 @@
                                         </div>
                                         <div class="col-6">
                                             <label for="">Price</label>
-                                            <p class="font-bold">${{ $row->price }}</p>
+                                            <p class="font-bold">Rp {{ number_format($row->price, 0, ',', '.') }}</p>
                                         </div>
                                         <div class="col-6">
                                             <label for="">Sub Total</label>
-                                            <p class="font-bold">${!! $row->price * $row->quantity !!}</p>
+                                            <p class="font-bold">Rp {{ number_format($row->price * $row->quantity, 0, ',', '.') }}</p>
                                         </div>
                                         <div class="col-12">
                                             <label for="">Quantity</label>
