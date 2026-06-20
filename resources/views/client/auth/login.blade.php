@@ -246,7 +246,7 @@
 
         <h1 class="auth-title">Masuk</h1>
         @if($uatNimLogin ?? false)
-            <p class="auth-subtitle">Masuk pakai <b>NIM</b> kamu — akun dibuat otomatis. Isi NIM di <b>kedua kolom</b> di bawah.</p>
+            <p class="auth-subtitle">Masuk untuk melanjutkan.</p>
         @else
             <p class="auth-subtitle">Belum punya akun? <a href="{{ route('clientRegisterPage') }}" style="color:#111;font-weight:700;">Daftar sekarang</a></p>
         @endif
@@ -263,13 +263,13 @@
 
             {{-- Email / NIM --}}
             <div class="form-group">
-                <label for="email">{{ ($uatNimLogin ?? false) ? 'NIM' : 'Email' }}</label>
+                <label for="email">{{ ($uatNimLogin ?? false) ? 'Username' : 'Email' }}</label>
                 <div class="input-wrap">
-                    <i class="bi {{ ($uatNimLogin ?? false) ? 'bi-person-badge' : 'bi-envelope' }}"></i>
+                    <i class="bi {{ ($uatNimLogin ?? false) ? 'bi-person' : 'bi-envelope' }}"></i>
                     <input
                         id="email" type="{{ ($uatNimLogin ?? false) ? 'text' : 'email' }}" name="email"
                         value="{{ old('email') }}"
-                        placeholder="{{ ($uatNimLogin ?? false) ? 'Ketik NIM kamu' : 'contoh@email.com' }}"
+                        placeholder="{{ ($uatNimLogin ?? false) ? 'Username' : 'contoh@email.com' }}"
                         inputmode="{{ ($uatNimLogin ?? false) ? 'numeric' : 'text' }}"
                         autocomplete="{{ ($uatNimLogin ?? false) ? 'off' : 'email' }}" autofocus
                         class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
@@ -280,12 +280,12 @@
 
             {{-- Password / NIM --}}
             <div class="form-group">
-                <label for="password">{{ ($uatNimLogin ?? false) ? 'Password (ketik NIM lagi)' : 'Password' }}</label>
+                <label for="password">Password</label>
                 <div class="input-wrap">
                     <i class="bi bi-lock"></i>
                     <input
                         id="password" type="password" name="password"
-                        placeholder="{{ ($uatNimLogin ?? false) ? 'Ketik NIM kamu lagi' : '••••••••' }}"
+                        placeholder="••••••••"
                         inputmode="{{ ($uatNimLogin ?? false) ? 'numeric' : 'text' }}"
                         autocomplete="current-password"
                         class="{{ $errors->has('password') ? 'is-invalid' : '' }}"

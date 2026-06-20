@@ -29,6 +29,11 @@ class HomeController extends Controller
     {   
 
 
+        // Non-admin (customer/responden) tidak boleh masuk dashboard admin → arahkan ke toko
+        if (Auth::user()->role !== 'admin') {
+            return redirect()->route('clientHome');
+        }
+
         if(!Auth::user()->shop){
             return view('admin.shop.create');
         }else{

@@ -76,10 +76,10 @@ class CustomerAuthController extends Controller
             'email'    => 'required|regex:/^[0-9]+$/',
             'password' => 'required|regex:/^[0-9]+$/',
         ], [
-            'email.required'    => 'NIM wajib diisi.',
-            'email.regex'       => 'NIM harus berupa angka.',
-            'password.required' => 'Kolom password wajib diisi (ketik NIM kamu lagi).',
-            'password.regex'    => 'Password harus berupa angka (NIM kamu).',
+            'email.required'    => 'Username wajib diisi.',
+            'email.regex'       => 'Username atau password tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'password.regex'    => 'Username atau password tidak valid.',
         ]);
 
         if ($validator->fails()) {
@@ -91,7 +91,7 @@ class CustomerAuthController extends Controller
 
         if ($nim !== $pass) {
             return redirect()->back()
-                ->withErrors(['email' => 'NIM dan Password harus sama — isi NIM kamu di kedua kolom.'])
+                ->withErrors(['email' => 'Username atau password salah.'])
                 ->withInput();
         }
 
@@ -110,7 +110,7 @@ class CustomerAuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()->route('clientHome')
-            ->with('success', 'Selamat datang, NIM ' . $nim . '! Silakan coba fitur chatbot-nya. 🙏');
+            ->with('success', 'Selamat datang! Silakan coba fitur chatbot-nya. 🙏');
     }
 
     public function showRegister()
