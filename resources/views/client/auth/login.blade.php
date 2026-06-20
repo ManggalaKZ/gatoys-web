@@ -245,7 +245,11 @@
         </a>
 
         <h1 class="auth-title">Masuk</h1>
-        <p class="auth-subtitle">Belum punya akun? <a href="{{ route('clientRegisterPage') }}" style="color:#111;font-weight:700;">Daftar sekarang</a></p>
+        @if($uatNimLogin ?? false)
+            <p class="auth-subtitle">Masuk pakai <b>NIM</b> kamu — akun dibuat otomatis. Isi NIM di <b>kedua kolom</b> di bawah.</p>
+        @else
+            <p class="auth-subtitle">Belum punya akun? <a href="{{ route('clientRegisterPage') }}" style="color:#111;font-weight:700;">Daftar sekarang</a></p>
+        @endif
 
         @if($errors->has('email') && !$errors->has('name') && !$errors->has('full_name'))
             <div class="alert-error">
@@ -257,30 +261,32 @@
         <form method="POST" action="{{ route('clientLoginPost') }}">
             @csrf
 
-            {{-- Email --}}
+            {{-- Email / NIM --}}
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email">{{ ($uatNimLogin ?? false) ? 'NIM' : 'Email' }}</label>
                 <div class="input-wrap">
-                    <i class="bi bi-envelope"></i>
+                    <i class="bi {{ ($uatNimLogin ?? false) ? 'bi-person-badge' : 'bi-envelope' }}"></i>
                     <input
-                        id="email" type="email" name="email"
+                        id="email" type="{{ ($uatNimLogin ?? false) ? 'text' : 'email' }}" name="email"
                         value="{{ old('email') }}"
-                        placeholder="contoh@email.com"
-                        autocomplete="email" autofocus
+                        placeholder="{{ ($uatNimLogin ?? false) ? 'Ketik NIM kamu' : 'contoh@email.com' }}"
+                        inputmode="{{ ($uatNimLogin ?? false) ? 'numeric' : 'text' }}"
+                        autocomplete="{{ ($uatNimLogin ?? false) ? 'off' : 'email' }}" autofocus
                         class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
                     >
                 </div>
                 @error('email') <div class="invalid-msg">{{ $message }}</div> @enderror
             </div>
 
-            {{-- Password --}}
+            {{-- Password / NIM --}}
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">{{ ($uatNimLogin ?? false) ? 'Password (ketik NIM lagi)' : 'Password' }}</label>
                 <div class="input-wrap">
                     <i class="bi bi-lock"></i>
                     <input
                         id="password" type="password" name="password"
-                        placeholder="••••••••"
+                        placeholder="{{ ($uatNimLogin ?? false) ? 'Ketik NIM kamu lagi' : '••••••••' }}"
+                        inputmode="{{ ($uatNimLogin ?? false) ? 'numeric' : 'text' }}"
                         autocomplete="current-password"
                         class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
                     >
@@ -299,9 +305,11 @@
             <button type="submit" class="btn-submit">Masuk</button>
         </form>
 
+        @unless($uatNimLogin ?? false)
         <div class="auth-switch">
             Belum punya akun? <a href="{{ route('clientRegisterPage') }}">Daftar di sini</a>
         </div>
+        @endunless
     </div>
 
     {{-- ── Kanan: Dekorasi ── --}}

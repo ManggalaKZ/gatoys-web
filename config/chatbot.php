@@ -22,4 +22,15 @@ return [
     */
     'api_url' => env('CHATBOT_API_URL', 'http://127.0.0.1:8001'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Login NIM Sementara (untuk pengambilan data UAT)
+    |--------------------------------------------------------------------------
+    | Saat true, halaman login berubah jadi mode NIM: mahasiswa cukup mengisi
+    | NIM (di kolom NIM & password), dan akun dibuat otomatis bila belum ada.
+    | Khusus UAT. Setelah selesai, set UAT_NIM_LOGIN=false untuk kembali ke
+    | login normal (email + password).
+    */
+    'uat_nim_login' => env('UAT_NIM_LOGIN', false),
+
 ];

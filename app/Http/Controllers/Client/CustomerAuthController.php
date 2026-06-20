@@ -20,13 +20,19 @@ class CustomerAuthController extends Controller
 
         $data = [
             'shop' => Shop::first(),
-            'title' => 'Login'
+            'title' => 'Login',
+            'uatNimLogin' => config('chatbot.uat_nim_login'),
         ];
         return view('client.auth.login', $data);
     }
 
     public function login(Request $request)
     {
+        // MODE UAT: login pakai NIM (sementara, untuk pengambilan data)
+        if (config('chatbot.uat_nim_login')) {
+            return $this->loginWithNim($request);
+        }
+
         $validator = Validator::make($request->all(), [
             'email'    => 'required|email',
             'password' => 'required',
@@ -58,6 +64,53 @@ class CustomerAuthController extends Controller
         return redirect()->back()
             ->withErrors(['email' => 'Email atau password salah.'])
             ->withInput();
+    }
+
+    /**
+     * Login NIM sementara untuk pengambilan data UAT.
+     * Mahasiswa mengisi NIM di kolom NIM & password; akun dibuat otomatis bila belum ada.
+     */
+    private function loginWithNim(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'    => 'required|regex:/^[0-9]+$/',
+            'password' => 'required|regex:/^[0-9]+$/',
+        ], [
+            'email.required'    => 'NIM wajib diisi.',
+            'email.regex'       => 'NIM harus berupa angka.',
+            'password.required' => 'Kolom password wajib diisi (ketik NIM kamu lagi).',
+            'password.regex'    => 'Password harus berupa angka (NIM kamu).',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $nim  = trim($request->input('email'));
+        $pass = trim($request->input('password'));
+
+        if ($nim !== $pass) {
+            return redirect()->back()
+                ->withErrors(['email' => 'NIM dan Password harus sama — isi NIM kamu di kedua kolom.'])
+                ->withInput();
+        }
+
+        // Auto-create akun bila belum ada (kunci unik: NIM)
+        $user = User::firstOrCreate(
+            ['email' => $nim . '@uat.local'],
+            [
+                'name'      => $nim,
+                'full_name' => 'Responden ' . $nim,
+                'password'  => Hash::make($nim),
+                'role'      => 'customer',
+            ]
+        );
+
+        Auth::login($user, true);
+        $request->session()->regenerate();
+
+        return redirect()->route('clientHome')
+            ->with('success', 'Selamat datang, NIM ' . $nim . '! Silakan coba fitur chatbot-nya. 🙏');
     }
 
     public function showRegister()
